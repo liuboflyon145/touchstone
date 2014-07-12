@@ -9,15 +9,16 @@
   :min-lein-version "2.3.3"
   :global-vars {*warn-on-reflection* true
                 *assert* true}
+
   :dependencies
   [[org.clojure/clojure            "1.4.0"]
    [com.taoensso/encore            "0.9.7"]
    [com.taoensso/carmine           "2.4.6"]
    [org.clojure/math.combinatorics "0.0.7"]]
 
-  :test-paths ["test" "src"]
   :profiles
   {;; :default [:base :system :user :provided :dev]
+   :server-jvm {:jvm-opts ^:replace ["-server"]}
    :1.5  {:dependencies [[org.clojure/clojure "1.5.1"]]}
    :1.6  {:dependencies [[org.clojure/clojure "1.6.0-beta1"]]}
    :test {:dependencies [[expectations            "1.4.56"]
@@ -25,24 +26,19 @@
                          [ring/ring-core          "1.2.1"]]
           :plugins [[lein-expectations "0.0.8"]
                     [lein-autoexpect   "1.2.2"]]}
-   :dev* [:dev {:jvm-opts ^:replace ["-server"]
-                ;; :hooks [cljx.hooks leiningen.cljsbuild] ; cljx
-                }]
    :dev
    [:1.6 :test
-    {:dependencies []
-     :plugins [[lein-ancient "0.5.4"]
+    {:plugins [[lein-pprint  "1.1.1"]
+               [lein-ancient "0.5.4"]
                [codox        "0.6.7"]]}]}
 
-  ;; :codox {:sources ["target/classes"]} ; cljx
+  :test-paths ["test" "src"]
   :aliases
   {"test-all"   ["with-profile" "default:+1.5:+1.6" "expectations"]
    ;; "test-all"   ["with-profile" "default:+1.6" "expectations"]
    "test-auto"  ["with-profile" "+test" "autoexpect"]
-   ;; "build-once" ["do" "cljx" "once," "cljsbuild" "once"] ; cljx
-   ;; "deploy-lib" ["do" "build-once," "deploy" "clojars," "install"] ; cljx
    "deploy-lib" ["do" "deploy" "clojars," "install"]
-   "start-dev"  ["with-profile" "+dev*" "repl" ":headless"]}
+   "start-dev"  ["with-profile" "+server-jvm" "repl" ":headless"]}
 
   :repositories
   {"sonatype"
